@@ -56,5 +56,41 @@
     "required": "هذا الحقل مطلوب",
     "invalidEmail": "بريد إلكتروني غير صحيح",
     "passwordTooShort": "كلمة المرور قصيرة جداً"
+  },
+  "Dashboard": {
+    "links": "الروابط",
+    "campaigns": "الحملات",
+    "analytics": "الإحصائيات",
+    "wallet": "المحفظة",
+    "telegram": "التليجرام",
+    "apiKeys": "مفاتيح API",
+    "settings": "الإعدادات",
+    "admin": "لوحة الأدمن",
+    "welcome": "أهلاً بك"
+  },
+  "Links": {
+    "title": "الروابط المختصرة",
+    "newLink": "رابط جديد",
+    "destination": "الرابط الأصلي",
+    "domain": "الدومين",
+    "slug": "الرمز المختصر",
+    "slugAutoNote": "اتركه فارغاً للتوليد التلقائي",
+    "campaign": "الحملة",
+    "linkTitle": "اسم الرابط",
+    "active": "نشط",
+    "clicks": "النقرات",
+    "created": "أُنشئ",
+    "noLinks": "لم تُنشئ أي رابط بعد. ابدأ بإنشاء رابطك الأول.",
+    "shortUrl": "الرابط المختصر",
+    "copyLink": "نسخ",
+    "copied": "تم النسخ!",
+    "redirectType": "نوع التحويل",
+    "permanent301": "دائم (301)",
+    "temporary302": "مؤقت (302)",
+    "expiresAt": "ينتهي في",
+    "maxClicks": "حد أقصى للنقرات",
+    "ogTitle": "عنوان OG",
+    "ogDescription": "وصف OG",
+    "ogImage": "صورة OG"
   }
 }

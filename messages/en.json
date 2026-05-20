@@ -56,5 +56,41 @@
     "required": "This field is required",
     "invalidEmail": "Invalid email address",
     "passwordTooShort": "Password is too short"
+  },
+  "Dashboard": {
+    "links": "Links",
+    "campaigns": "Campaigns",
+    "analytics": "Analytics",
+    "wallet": "Wallet",
+    "telegram": "Telegram",
+    "apiKeys": "API Keys",
+    "settings": "Settings",
+    "admin": "Admin Panel",
+    "welcome": "Welcome"
+  },
+  "Links": {
+    "title": "Short Links",
+    "newLink": "New link",
+    "destination": "Destination URL",
+    "domain": "Domain",
+    "slug": "Short code",
+    "slugAutoNote": "Leave blank to auto-generate",
+    "campaign": "Campaign",
+    "linkTitle": "Link name",
+    "active": "Active",
+    "clicks": "Clicks",
+    "created": "Created",
+    "noLinks": "No links yet. Create your first one.",
+    "shortUrl": "Short URL",
+    "copyLink": "Copy",
+    "copied": "Copied!",
+    "redirectType": "Redirect type",
+    "permanent301": "Permanent (301)",
+    "temporary302": "Temporary (302)",
+    "expiresAt": "Expires at",
+    "maxClicks": "Max clicks",
+    "ogTitle": "OG title",
+    "ogDescription": "OG description",
+    "ogImage": "OG image"
   }
 }

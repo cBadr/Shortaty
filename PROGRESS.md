@@ -41,18 +41,57 @@
 
 ---
 
-## 🔜 Phase 2 — Link Engine (Next)
+## ✅ Phase 2 — Link Engine (Complete)
 
 **Goal**: Implement the core URL shortening + redirect engine with smart targeting.
 
-Planned:
-- Links CRUD UI under `/dashboard/links`
-- Edge-runtime redirect endpoint `/api/r/[slug]`
-- Device/OS/Geo detection via `ua-parser-js` + Vercel geo headers
-- Bot detection (`isbot` + custom heuristics for Telegram/FB/WhatsApp preview crawlers)
-- Targeting rules engine (priority-ordered JSON conditions)
-- Click logging (async fire-and-forget)
-- OG/meta tags for bot previews (no redirect for crawlers)
+### What was built
+
+**Targeting library** (`src/lib/targeting/`):
+- `device.ts` — UA parsing with `ua-parser-js`, classifies mobile/tablet/desktop and OS family.
+- `geo.ts` — extracts country/region/city/timezone from Vercel-injected headers; primary `Accept-Language` tag.
+- `bot-detector.ts` — recognises preview crawlers (Telegram, WhatsApp, Facebook, Twitter, LinkedIn, Slack, Discord, Pinterest, Reddit) and search-engine bots (Google, Bing, Yandex, Baidu, etc.), with `isbot` fallback.
+- `visitor.ts` — composes the full `VisitorContext` (device + geo + bot + UTM + referrer + language + cookie-based new/returning + SHA-256 fingerprint + hour/weekday in visitor TZ).
+- `rules-engine.ts` — evaluates priority-ordered JSON conditions: `os`, `device`, `browser`, `country`, `language`, `referrer_domain`, `utm_*`, `is_bot`, `is_vpn`, `visitor_type`, `weekday`, `time_range`. First match wins; lower `priority` runs first.
+
+**Redirect engine** ([src/app/api/r/[slug]/route.ts](src/app/api/r/[slug]/route.ts)):
+- Edge runtime (`runtime = "edge"`).
+- Looks up domain by `Host` header, then link by `(domain_id, slug)`.
+- Honours `expires_at` and `max_clicks`.
+- Builds visitor context, evaluates rules, picks destination, appends per-link UTM params.
+- **Bot preview**: returns HTML with OG/Twitter meta (no redirect) so social previews work without burning a redirect.
+- **Humans**: `301` or `302` based on `redirect_type`.
+- Sets `st_v` HTTP-only cookie on new visitors for "unique visitor" tracking.
+- Uses Next.js 15 `after()` to fire-and-forget the click insert, atomic counter increment (`increment_link_clicks` RPC), and credit deduction (`deduct_credits` RPC) — request returns instantly.
+
+**Database** (`supabase/migrations/0002_link_functions.sql`):
+- `increment_link_clicks(p_link_id, p_is_unique)` — atomic counter update.
+- `deduct_credits(p_user_id, p_amount, ...)` — atomic balance check + transaction insert; returns NULL if insufficient.
+- `add_credits(p_user_id, p_amount, p_type, ...)` — wallet topup/bonus/refund/admin adjust.
+
+**Dashboard UI**:
+- `/dashboard` home — stats cards (links, clicks, balance, telegram status).
+- `/dashboard/links` — list with short URL, destination, total/unique clicks, created date.
+- `/dashboard/links/new` — create form with domain picker, slug (auto-gen via nanoid if blank), redirect type, optional UTM and OG/expiry/max-clicks advanced fields.
+- `/dashboard/links/[id]` — edit basic fields, see counters, manage targeting rules. Rules UI supports JSON conditions with one-click presets (iOS, Android, Egypt, Mobile-only). Toggle/delete/add rules inline.
+- Server actions: `createLink`, `updateLink`, `deleteLink`, `createRule`, `toggleRule`, `deleteRule` with Zod validation + ownership checks.
+- Reusable `DashboardSidebar` component with links/campaigns/analytics/wallet/telegram/api-keys/settings sections and conditional admin entry.
+
+### Files of note
+- [src/lib/targeting/](src/lib/targeting/) — 5 files, ~350 lines, edge-runtime safe.
+- [src/app/api/r/[slug]/route.ts](src/app/api/r/%5Bslug%5D/route.ts) — the core redirect engine.
+- [supabase/migrations/0002_link_functions.sql](supabase/migrations/0002_link_functions.sql) — atomic RPC helpers.
+- [src/app/[locale]/dashboard/links/](src/app/%5Blocale%5D/dashboard/links/) — full CRUD + rules UI.
+- [src/lib/slug.ts](src/lib/slug.ts) — URL-safe slug generator (no `0/O/1/l/I`).
+
+### Verification
+- ✅ `npm run typecheck` — passes (after dropping the `<Database>` generic constraint from Supabase clients; the placeholder type is permissive until codegen runs).
+- ✅ `npm run build` — passes, 17 pages prerendered, edge function `/api/r/[slug]` bundled, middleware 47.6 kB.
+
+### Deferred / handled in later phases
+- Real-time analytics dashboard (Phase 3).
+- Domain self-service with Vercel API integration (Phase 4) — for now `/admin/domains` UI is missing and active domains must be inserted manually into the DB during testing.
+- VPN/Proxy detection requires external IP intelligence (deferred to Phase 8).
 
 ---
 
@@ -61,8 +100,8 @@ Planned:
 | # | Phase | Status |
 |---|-------|--------|
 | 1 | Foundation (Next.js, Supabase, i18n, Auth) | ✅ Complete |
-| 2 | Link Engine (redirect + targeting + clicks) | ⏳ Next |
-| 3 | Analytics Dashboard | ⏳ Pending |
+| 2 | Link Engine (redirect + targeting + clicks) | ✅ Complete |
+| 3 | Analytics Dashboard | ⏳ Next |
 | 4 | Multi-Domain Management (Vercel API) | ⏳ Pending |
 | 5 | Telegram Notifications (per-user bots) | ⏳ Pending |
 | 6 | Wallet & Coinpayments | ⏳ Pending |
