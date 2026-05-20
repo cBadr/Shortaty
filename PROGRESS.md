@@ -164,6 +164,29 @@
 
 ---
 
+## ✅ Phase 6 — Wallet & Coinpayments (Complete)
+
+**Goal**: Users top up a credit balance via Coinpayments.net (crypto); balance is deducted automatically on every (non-bot) click.
+
+### What was built
+- **Coinpayments client** ([src/lib/coinpayments/client.ts](src/lib/coinpayments/client.ts)) — `createTransaction(amountUsd, currency2, ...)`, HMAC-SHA512 signed POST. Edge-incompatible by design (uses `node:crypto`), so the wallet/IPN endpoints run on Node serverless.
+- **IPN verifier** — `verifyIpnHmac(rawBody, hmacHeader)` does timing-safe SHA512 comparison against `COINPAYMENTS_IPN_SECRET`.
+- **Topup endpoint** ([/api/wallet/topup](src/app/api/wallet/topup/route.ts)) — creates `topup_orders` row, asks Coinpayments for a payment address + QR, returns it to the client.
+- **IPN webhook** ([/api/webhooks/coinpayments](src/app/api/webhooks/coinpayments/route.ts)) — verifies HMAC + merchant_id; on status ≥ 100 marks order paid, calls `add_credits` RPC, and enqueues a `new_topup` Telegram notification.
+- **Wallet UI** ([/dashboard/wallet](src/app/%5Blocale%5D/dashboard/wallet/page.tsx)):
+  - Gradient balance hero with live "credits/USD" rate.
+  - Amount presets ($10/25/50/100/250/500) + custom input + 6 currencies (USDT TRC20/ERC20, BTC, ETH, LTC, DOGE).
+  - Topup result panel with address, QR image, and Coinpayments checkout link.
+  - Recent transactions list with green/red arrows.
+  - Topup orders list with status badge.
+- **Low-balance cron** ([/api/cron/low-balance](src/app/api/cron/low-balance/route.ts)) — hourly; alerts users whose balance dropped under `low_balance_threshold` (defaults to 1.0 credit). Honors per-user `low_balance` template + dedupes within 6h.
+
+### Verification
+- ✅ `npm run typecheck` — passes
+- ✅ `npm run build` — passes. 11 API routes total now bundled (wallet/topup + coinpayments webhook + low-balance cron + previous). Wallet page at 3.02 kB.
+
+---
+
 ## Phase Roadmap Overview
 
 | # | Phase | Status |
@@ -173,7 +196,7 @@
 | 3 | Analytics Dashboard | ✅ Complete |
 | 4 | Multi-Domain Management (Vercel API) | ✅ Complete |
 | 5 | Telegram Notifications (per-user bots) | ✅ Complete |
-| 6 | Wallet & Coinpayments | ⏳ Pending |
+| 6 | Wallet & Coinpayments | ✅ Complete |
 | 7 | API + Admin Panel | ⏳ Pending |
 | 8 | Polish, SEO, Deploy | ⏳ Pending |
 
