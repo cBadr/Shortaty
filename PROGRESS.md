@@ -117,6 +117,28 @@
 
 ---
 
+## ✅ Phase 4 — Multi-Domain Management (Complete)
+
+**Goal**: Let admin add custom domains; system registers them with Vercel and watches DNS until they go active.
+
+### What was built
+- **Vercel API wrapper** ([src/lib/vercel/domains.ts](src/lib/vercel/domains.ts)) — `addDomain`, `getDomain`, `verifyDomain`, `removeDomain`, `dnsInstructionsFor` helper. Handles team-scoped projects via `VERCEL_TEAM_ID`.
+- **Admin layout + role guard** ([src/app/[locale]/admin/layout.tsx](src/app/%5Blocale%5D/admin/layout.tsx)) — redirects non-admins to dashboard; loads admin sidebar.
+- **Admin domains page** ([src/app/[locale]/admin/domains/](src/app/%5Blocale%5D/admin/domains/)):
+  - Table with hostname, status badge (active/verifying/pending/error), default star.
+  - Add-domain form with validation regex + "Make default" toggle (ensures only one default).
+  - Per-row actions: **Verify** (re-runs Vercel verify), **Refresh** (re-fetches status), **Delete**.
+  - DNS instructions footer with apex/subdomain guidance.
+- **Server actions** (`actions.ts`) with admin gate on every action.
+- **DNS verification cron** ([src/app/api/cron/dns-verify/route.ts](src/app/api/cron/dns-verify/route.ts)) — runs every 5 minutes, picks up `pending|verifying|error` domains, asks Vercel, updates DB. Protected by `CRON_SECRET`.
+- **vercel.json** wires both crons (analytics rollup hourly + DNS verify every 5 min).
+
+### Verification
+- ✅ `npm run typecheck` — passes
+- ✅ `npm run build` — passes, `/admin/domains` and 5 routes prerendered (ar/en), 2 cron endpoints bundled.
+
+---
+
 ## Phase Roadmap Overview
 
 | # | Phase | Status |
@@ -124,7 +146,7 @@
 | 1 | Foundation (Next.js, Supabase, i18n, Auth) | ✅ Complete |
 | 2 | Link Engine (redirect + targeting + clicks) | ✅ Complete |
 | 3 | Analytics Dashboard | ✅ Complete |
-| 4 | Multi-Domain Management (Vercel API) | ⏳ Pending |
+| 4 | Multi-Domain Management (Vercel API) | ✅ Complete |
 | 5 | Telegram Notifications (per-user bots) | ⏳ Pending |
 | 6 | Wallet & Coinpayments | ⏳ Pending |
 | 7 | API + Admin Panel | ⏳ Pending |
