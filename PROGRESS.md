@@ -187,6 +187,41 @@
 
 ---
 
+## ✅ Phase 7 — API + Admin Panel (Complete)
+
+**Goal**: Expose a REST API for external integrations and complete the admin tools (users, transactions, system settings).
+
+### What was built
+
+**API keys & auth helper**:
+- [src/lib/api-keys.ts](src/lib/api-keys.ts) — `generateApiKey()` returns `{ plaintext, hash, prefix }`; only the SHA-256 hash is stored. Prefix shown in the UI is a teaser `sk_live_abc…XXXX`.
+- [src/lib/api-auth.ts](src/lib/api-auth.ts) — `authenticateRequest`, `requireScope`, and `withApiAuth(scope, handler)` higher-order wrapper. Each authenticated request asynchronously updates `last_used_at`.
+
+**User-facing API keys UI** ([/dashboard/api-keys](src/app/%5Blocale%5D/dashboard/api-keys/page.tsx)):
+- One-time-only key reveal banner with copy-to-clipboard.
+- Create with optional comma-separated scopes (`links:read`, `links:write`, `analytics:read`, `wallet:read`, …) — empty means full access.
+- Optional expiry in days.
+- Per-key revoke.
+
+**Public REST API** (Node serverless, `/api/v1/*`):
+- `GET /api/v1/links` — list user's links (scope: `links:read`).
+- `POST /api/v1/links` — create link; accepts `domain_id` or `domain` hostname or falls back to the default. Auto-generates slug if missing (scope: `links:write`). Returns the assembled `short_url`.
+- `GET /api/v1/links/{id}` — fetch with rules + domain hostname.
+- `PATCH /api/v1/links/{id}` — partial update.
+- `DELETE /api/v1/links/{id}`.
+- `GET /api/v1/wallet/balance` — credits balance (scope: `wallet:read`).
+
+**Admin pages**:
+- `/admin/users` — list with role badge, balance, Telegram status, block/unblock toggle, inline credit-adjust form (calls `add_credits` RPC).
+- `/admin/transactions` — wallet_transactions feed + topup_orders table with status badges and email lookup.
+- `/admin/settings` — edits every `system_settings` row inline (parses value as JSON if possible, else stores as text). Updates `updated_by`/`updated_at`.
+
+### Verification
+- ✅ `npm run typecheck` — passes
+- ✅ `npm run build` — passes. 23 routes total, 3 new v1 API endpoints + 4 admin pages + api-keys page.
+
+---
+
 ## Phase Roadmap Overview
 
 | # | Phase | Status |
@@ -197,7 +232,7 @@
 | 4 | Multi-Domain Management (Vercel API) | ✅ Complete |
 | 5 | Telegram Notifications (per-user bots) | ✅ Complete |
 | 6 | Wallet & Coinpayments | ✅ Complete |
-| 7 | API + Admin Panel | ⏳ Pending |
+| 7 | API + Admin Panel | ✅ Complete |
 | 8 | Polish, SEO, Deploy | ⏳ Pending |
 
 Reference: full plan at `C:/Users/Badr/.claude/plans/elegant-roaming-salamander.md`
