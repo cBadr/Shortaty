@@ -139,6 +139,31 @@
 
 ---
 
+## ✅ Phase 5 — Telegram Notifications (Complete)
+
+**Goal**: Each user brings their own Telegram bot; site sends per-event notifications (clicks, digests, milestones, alerts) using customisable templates.
+
+### What was built
+- **AES-256-GCM crypto** ([src/lib/crypto.ts](src/lib/crypto.ts)) — `encryptSecret`/`decryptSecret`/`shortHash`, Edge-runtime safe via Web Crypto.
+- **Telegram client** ([src/lib/telegram/client.ts](src/lib/telegram/client.ts)) — `getMe`, `sendMessage`, `setWebhook`, `deleteWebhook`.
+- **Template system** ([src/lib/telegram/templates.ts](src/lib/telegram/templates.ts)) — `renderTemplate({placeholder})` + `DEFAULT_TEMPLATES` for 8 events (on_click, digest_hourly, digest_daily, digest_minutes, low_balance, new_topup, milestone, link_expired).
+- **Enqueue helper** ([src/lib/telegram/enqueue.ts](src/lib/telegram/enqueue.ts)) — checks template enabled + throttle, renders, inserts into `telegram_outbox`.
+- **User settings page** ([/dashboard/telegram](src/app/%5Blocale%5D/dashboard/telegram/page.tsx)):
+  - Bot token input with regex validation; calls `getMe` to verify; stores encrypted; registers webhook automatically.
+  - Status banner ("Open your bot and send /start") until chat_id captured.
+  - Per-event template editor with enable toggle, on_click throttle, inline save-on-blur.
+- **Webhook receiver** ([/api/webhooks/telegram/[hash]](src/app/api/webhooks/telegram/%5Bhash%5D/route.ts)) — handles `/start` (captures chat_id, marks verified, sends welcome) and `/ping`. Matches user by re-hashing decrypted bot tokens.
+- **Outbox sender cron** (`/api/cron/telegram-outbox`, every minute) — caches bot tokens per user, exponential-backoff retries up to 5 attempts.
+- **Digest cron** (`/api/cron/telegram-digest?period=hourly|daily`) — aggregates the last hour/day of clicks per user with `digest_hourly`/`digest_daily` enabled and queues a summary (total, unique, top country/OS/link).
+- **Wired into the redirect engine** — every non-bot click triggers `enqueueNotification(user, "on_click", { ... })` in the `after()` background block.
+- **vercel.json crons**: outbox (`* * * * *`), digest hourly (`5 * * * *`), digest daily (`10 0 * * *`).
+
+### Verification
+- ✅ `npm run typecheck` — passes (after relaxing `BufferSource` types in crypto for Edge runtime).
+- ✅ `npm run build` — passes. 5 Telegram endpoints bundled (outbox, digest, webhook, plus existing crons). `/dashboard/telegram` route at 3.37 kB.
+
+---
+
 ## Phase Roadmap Overview
 
 | # | Phase | Status |
@@ -147,7 +172,7 @@
 | 2 | Link Engine (redirect + targeting + clicks) | ✅ Complete |
 | 3 | Analytics Dashboard | ✅ Complete |
 | 4 | Multi-Domain Management (Vercel API) | ✅ Complete |
-| 5 | Telegram Notifications (per-user bots) | ⏳ Pending |
+| 5 | Telegram Notifications (per-user bots) | ✅ Complete |
 | 6 | Wallet & Coinpayments | ⏳ Pending |
 | 7 | API + Admin Panel | ⏳ Pending |
 | 8 | Polish, SEO, Deploy | ⏳ Pending |

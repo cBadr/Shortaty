@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { buildVisitorContext } from "@/lib/targeting/visitor";
 import { pickRule } from "@/lib/targeting/rules-engine";
 import type { LinkRule } from "@/lib/targeting/types";
+import { enqueueNotification } from "@/lib/telegram/enqueue";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -201,7 +202,7 @@ export async function GET(
         p_is_unique: isUnique,
       });
 
-      // Deduct credits only for real (non-bot) clicks
+      // Deduct credits + enqueue Telegram notification only for real (non-bot) clicks
       if (!visitor.bot.isBot) {
         const { data: setting } = await sb
           .from("system_settings")
@@ -218,6 +219,26 @@ export async function GET(
             p_metadata: { type: "click" },
           });
         }
+
+        await enqueueNotification(sb, link.user_id, "on_click", {
+          link_slug: link.slug,
+          link_title: link.title || link.slug,
+          destination,
+          country: visitor.geo.country || "—",
+          region: visitor.geo.region || "—",
+          city: visitor.geo.city || "—",
+          os: visitor.device.os || "—",
+          browser: visitor.device.browser || "—",
+          device: visitor.device.type,
+          referrer: visitor.referrerDomain || "direct",
+          is_unique: isUnique ? "🆕 New" : "🔁 Returning",
+          is_bot: visitor.bot.isBot,
+          utm_source: visitor.utm.source || "",
+          utm_medium: visitor.utm.medium || "",
+          utm_campaign: visitor.utm.campaign || "",
+          language: visitor.language || "—",
+          total_clicks: link.total_clicks + 1,
+        });
       }
     } catch (err) {
       console.error("[redirect] background task failed", err);
