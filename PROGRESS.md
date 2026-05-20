@@ -95,13 +95,35 @@
 
 ---
 
+## ✅ Phase 3 — Analytics Dashboard (Complete)
+
+**Goal**: Visualize click data with charts, breakdowns, and CSV export.
+
+### What was built
+- **Queries library** ([src/lib/analytics/queries.ts](src/lib/analytics/queries.ts)) — `getTotals`, `getTimeseries`, `getBreakdown`, `getRecentClicks`. All scope to the user's own links via explicit `IN` on link IDs (RLS belt-and-braces).
+- **Analytics page** ([src/app/[locale]/dashboard/analytics/page.tsx](src/app/%5Blocale%5D/dashboard/analytics/page.tsx)):
+  - Time-range pills (24h / 7d / 30d / 90d).
+  - 4 stat cards (total / unique / bots / links).
+  - Area chart of clicks over time (total + unique).
+  - 5 breakdown cards (country, OS, device, browser, referrer) with mini bar visualisation.
+  - Recent clicks table (30 rows) with CSV export link.
+- **Recharts integration** ([src/components/charts/timeseries.tsx](src/components/charts/timeseries.tsx)) using brand colors.
+- **CSV export** ([src/app/api/analytics/export/route.ts](src/app/api/analytics/export/route.ts)) — streams up to 50k rows with proper escaping; user-scoped.
+- **Daily rollup** (`supabase/migrations/0003_rollup.sql` + `/api/cron/analytics-rollup`): `rollup_clicks_daily()` rebuilds the last 2 days into `clicks_daily` for fast aggregations. Triggered hourly by Vercel Cron (`vercel.json`).
+
+### Verification
+- ✅ `npm run typecheck` — passes
+- ✅ `npm run build` — passes, analytics page 102 kB chunk (Recharts is the heaviest dep), CSV/rollup endpoints bundled.
+
+---
+
 ## Phase Roadmap Overview
 
 | # | Phase | Status |
 |---|-------|--------|
 | 1 | Foundation (Next.js, Supabase, i18n, Auth) | ✅ Complete |
 | 2 | Link Engine (redirect + targeting + clicks) | ✅ Complete |
-| 3 | Analytics Dashboard | ⏳ Next |
+| 3 | Analytics Dashboard | ✅ Complete |
 | 4 | Multi-Domain Management (Vercel API) | ⏳ Pending |
 | 5 | Telegram Notifications (per-user bots) | ⏳ Pending |
 | 6 | Wallet & Coinpayments | ⏳ Pending |
