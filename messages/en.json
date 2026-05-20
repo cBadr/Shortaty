@@ -1,0 +1,60 @@
+{
+  "Common": {
+    "appName": "Shortaty",
+    "tagline": "Smart URL shortening for professional marketers",
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "search": "Search",
+    "yes": "Yes",
+    "no": "No",
+    "back": "Back",
+    "next": "Next",
+    "logout": "Logout"
+  },
+  "Nav": {
+    "home": "Home",
+    "features": "Features",
+    "pricing": "Pricing",
+    "docs": "Docs",
+    "login": "Login",
+    "register": "Sign Up",
+    "dashboard": "Dashboard"
+  },
+  "Home": {
+    "heroTitle": "Smart URL shortening. Smart targeting. Pro analytics.",
+    "heroSubtitle": "Shortaty lets you create short links across multiple domains with smart device/geo targeting and instant Telegram notifications.",
+    "ctaPrimary": "Start free",
+    "ctaSecondary": "See features",
+    "feature1Title": "Multi-Domain",
+    "feature1Body": "Add unlimited domains and use them to shorten links.",
+    "feature2Title": "Smart Targeting",
+    "feature2Body": "Send iOS visitors to App Store, Android to Play Store, route by country, language, source and more.",
+    "feature3Title": "Telegram Notifications",
+    "feature3Body": "Get instant notifications on every click, or automated periodic reports.",
+    "feature4Title": "Pro API",
+    "feature4Body": "Full integration with your apps via REST API."
+  },
+  "Auth": {
+    "loginTitle": "Login",
+    "registerTitle": "Create new account",
+    "email": "Email",
+    "password": "Password",
+    "fullName": "Full name",
+    "loginButton": "Sign in",
+    "registerButton": "Create account",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "orContinueWith": "Or continue with",
+    "googleLogin": "Google",
+    "forgotPassword": "Forgot password?"
+  },
+  "Errors": {
+    "required": "This field is required",
+    "invalidEmail": "Invalid email address",
+    "passwordTooShort": "Password is too short"
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "Common": {
+    "appName": "شورتاتي",
+    "tagline": "اختصار الروابط الذكي للمسوقين المحترفين",
+    "loading": "جارٍ التحميل...",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "create": "إنشاء",
+    "search": "بحث",
+    "yes": "نعم",
+    "no": "لا",
+    "back": "رجوع",
+    "next": "التالي",
+    "logout": "تسجيل الخروج"
+  },
+  "Nav": {
+    "home": "الرئيسية",
+    "features": "المميزات",
+    "pricing": "الأسعار",
+    "docs": "الوثائق",
+    "login": "تسجيل الدخول",
+    "register": "إنشاء حساب",
+    "dashboard": "لوحة التحكم"
+  },
+  "Home": {
+    "heroTitle": "اختصار روابط ذكي. توجيه ذكي. إحصائيات احترافية.",
+    "heroSubtitle": "منصة شورتاتي تتيح لك إنشاء روابط مختصرة بدومينات متعددة، مع توجيه ذكي حسب الجهاز والموقع، وإشعارات تليجرام فورية.",
+    "ctaPrimary": "ابدأ مجاناً",
+    "ctaSecondary": "شاهد المميزات",
+    "feature1Title": "متعدد الدومينات",
+    "feature1Body": "أضف دومينات لا نهائية واستخدمها في اختصار الروابط.",
+    "feature2Title": "توجيه ذكي",
+    "feature2Body": "وجّه زوار iOS إلى App Store، وAndroid إلى Play Store، وحسب الدولة واللغة والمصدر.",
+    "feature3Title": "إشعارات تليجرام",
+    "feature3Body": "احصل على إشعار فوري بكل زيارة، أو تقارير دورية تلقائية.",
+    "feature4Title": "API احترافي",
+    "feature4Body": "تكامل كامل مع تطبيقاتك عبر REST API."
+  },
+  "Auth": {
+    "loginTitle": "تسجيل الدخول",
+    "registerTitle": "إنشاء حساب جديد",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "fullName": "الاسم الكامل",
+    "loginButton": "دخول",
+    "registerButton": "إنشاء الحساب",
+    "noAccount": "ليس لديك حساب؟",
+    "hasAccount": "لديك حساب بالفعل؟",
+    "orContinueWith": "أو الدخول بواسطة",
+    "googleLogin": "Google",
+    "forgotPassword": "نسيت كلمة المرور؟"
+  },
+  "Errors": {
+    "required": "هذا الحقل مطلوب",
+    "invalidEmail": "بريد إلكتروني غير صحيح",
+    "passwordTooShort": "كلمة المرور قصيرة جداً"
+  }
+}
